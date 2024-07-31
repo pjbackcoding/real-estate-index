@@ -33,410 +33,223 @@
             padding: 20px;
         }
 
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        nav ul li {
-            display: inline;
-            margin: 0 10px;
-        }
-
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        nav ul li a:hover {
-            color: var(--secondary-color);
-        }
-
-        h1, h2 {
+        h1 {
             color: var(--primary-color);
             text-align: center;
             margin-bottom: 30px;
+            font-size: 2.5em;
             font-weight: 300;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
 
-        h1 {
-            font-size: 2.5em;
-        }
-
-        h2 {
-            font-size: 2em;
-        }
-
-        .card {
-            background-color: var(--card-background);
-            border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            padding: 30px;
+        .city-card {
+            display: flex;
+            align-items: center;
             margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .card:hover {
+        .city-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 20px;
+        .city-image {
+            width: 150px;
+            height: 100px;
+            object-fit: cover;
         }
 
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
+        .city-info {
+            padding: 20px;
+            flex-grow: 1;
         }
 
-        th {
-            background-color: var(--secondary-color);
-            color: white;
-            text-transform: uppercase;
+        .city-name {
+            font-size: 1.2em;
             font-weight: 500;
-            letter-spacing: 1px;
-            border-top: 3px solid var(--primary-color);
+            margin-bottom: 10px;
+            color: white;
         }
 
-        tr:last-child td {
-            border-bottom: none;
+        .city-price {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: white;
         }
 
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-
-        tr:hover {
-            background-color: #e8f4fd;
-            transition: background-color 0.3s ease;
-        }
-
-        .controls {
+        .city-rank {
+            font-size: 2em;
+            font-weight: 700;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        .search-filter {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        input[type="text"], select {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        input[type="text"]:focus, select:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            margin-right: 20px;
         }
 
         .currency-toggle {
             display: flex;
-            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
         }
 
         .currency-toggle button {
             padding: 10px 15px;
-            background-color: #e0e0e0;
-            color: var(--text-color);
+            background-color: var(--secondary-color);
+            color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s ease;
+            margin: 0 10px;
         }
 
         .currency-toggle button.active {
-            background-color: var(--secondary-color);
-            color: white;
+            background-color: var(--primary-color);
         }
 
-        .city-name {
-            font-weight: 500;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-        }
-
-        .continent-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 10px;
-            display: inline-block;
-        }
-
-        .price {
-            font-weight: 700;
-            color: var(--accent-color);
-        }
-
-        .note {
-            text-align: center;
-            font-style: italic;
-            color: var(--text-light);
-            margin-top: 20px;
-        }
-
-        #priceChart {
+        .chart-container {
             margin-top: 40px;
-        }
-
-        .legend {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin: 0 10px 10px 0;
-        }
-
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
-
-        .about, .contact {
-            margin: 40px 0;
-            text-align: center;
-        }
-
-        .about p, .contact p {
-            font-size: 1.1em;
-            color: var(--text-color);
-            max-width: 800px;
-            margin: 0 auto 20px auto;
-            line-height: 1.8;
-        }
-
-        .disclaimer {
-            font-size: 0.9em;
-            color: var(--text-light);
-        }
-
-        .city-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 15px;
+            background-color: var(--card-background);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         @media (max-width: 768px) {
-            .container {
-                width: 95%;
-            }
-            table {
-                font-size: 14px;
-            }
-            th, td {
-                padding: 10px;
-            }
-            .controls {
+            .city-card {
                 flex-direction: column;
-                align-items: stretch;
+                text-align: center;
             }
-            .search-filter {
-                flex-direction: column;
-                align-items: stretch;
+
+            .city-rank {
+                margin: 10px 0;
+            }
+
+            .city-image {
+                width: 100%;
+                height: 150px;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
     <div class="container">
         <h1>Global Real Estate Price Index 2024</h1>
         
-        <div class="card">
-            <div class="controls">
-                <div class="search-filter">
-                    <input type="text" id="searchInput" placeholder="Search cities...">
-                    <select id="continentFilter">
-                        <option value="">All Continents</option>
-                    </select>
-                    <select id="priceFilter">
-                        <option value="">All Prices</option>
-                        <option value="0-5000">$0 - $5,000</option>
-                        <option value="5001-10000">$5,001 - $10,000</option>
-                        <option value="10001-15000">$10,001 - $15,000</option>
-                        <option value="15001+">$15,001+</option>
-                    </select>
-                </div>
-                <div class="currency-toggle">
-                    <button id="usdToggle" class="active">USD</button>
-                    <button id="eurToggle">EUR</button>
-                </div>
-            </div>
-
-            <table id="priceTable">
-                <thead>
-                    <tr>
-                        <th>City</th>
-                        <th>Price per m²</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-            
-            <div class="legend" id="continentLegend">
-            </div>
-
-            <p class="note">* Prices are based on city center locations as of 2024</p>
+        <div class="currency-toggle">
+            <button id="eurToggle" class="active">EUR</button>
+            <button id="usdToggle">USD</button>
         </div>
 
-        <div class="card">
+        <div id="cityList">
+            <!-- City cards will be dynamically inserted here -->
+        </div>
+
+        <div class="chart-container">
             <canvas id="priceChart"></canvas>
         </div>
     </div>
 
     <script>
-        const cityPrices = [
-            { city: "Hong Kong", priceUSD: 29709.75, continent: "Asia" },
-            { city: "Singapore", priceUSD: 20512.39, continent: "Asia" },
-            { city: "London", priceUSD: 17200.00, continent: "Europe" },
-            { city: "New York", priceUSD: 15300.00, continent: "North America" },
-            { city: "San Francisco", priceUSD: 11077.00, continent: "North America" },
-            { city: "Paris", priceUSD: 9224.89, continent: "Europe" },
-            { city: "Sydney", priceUSD: 10895.62, continent: "Australia" },
-            { city: "Vancouver", priceUSD: 10895.62, continent: "North America" },
-            { city: "Tokyo", priceUSD: 9389.22, continent: "Asia" },
-            { city: "Taipei", priceUSD: 7027.00, continent: "Asia" },
-            { city: "Berlin", priceUSD: 8178.95, continent: "Europe" },
-            { city: "Rome", priceUSD: 8320.40, continent: "Europe", priceEUR: 7564 },
-            { city: "Madrid", priceUSD: 6037.90, continent: "Europe", priceEUR: 5489 },
-            { city: "Dubai", priceUSD: 4862.33, continent: "Asia" },
-            { city: "Ho Chi Minh", priceUSD: 4249.66, continent: "Asia" }
+        // City data with continent information and image URLs
+        const cities = [
+            { name: "Hong Kong", priceEUR: 22000, continent: "Asia", image: "/api/placeholder/150/100" },
+            { name: "London", priceEUR: 14000, continent: "Europe", image: "/api/placeholder/150/100" },
+            { name: "Singapore", priceEUR: 13500, continent: "Asia", image: "/api/placeholder/150/100" },
+            { name: "New York", priceEUR: 12500, continent: "North America", image: "/api/placeholder/150/100" },
+            { name: "San Francisco", priceEUR: 11500, continent: "North America", image: "/api/placeholder/150/100" },
+            { name: "Tokyo", priceEUR: 11000, continent: "Asia", image: "/api/placeholder/150/100" },
+            { name: "Sydney", priceEUR: 9500, continent: "Australia", image: "/api/placeholder/150/100" },
+            { name: "Paris", priceEUR: 9224, continent: "Europe", image: "/api/placeholder/150/100" },
+            { name: "Munich", priceEUR: 8500, continent: "Europe", image: "/api/placeholder/150/100" },
+            { name: "Rome", priceEUR: 7564, continent: "Europe", image: "/api/placeholder/150/100" },
+            { name: "Dubai", priceEUR: 7000, continent: "Asia", image: "/api/placeholder/150/100" },
+            { name: "Madrid", priceEUR: 4729, continent: "Europe", image: "/api/placeholder/150/100" },
+            { name: "Ho Chi Minh City", priceEUR: 3506.61, continent: "Asia", image: "/api/placeholder/150/100" }
         ];
 
+        // Conversion rate (example: 1 EUR = 1.18 USD)
+        const EUR_TO_USD = 1.18;
+
+        // Updated color schemes for different continents with precise hex codes
         const continentColors = {
-            "Asia": "#FF6384",
-            "Europe": "#36A2EB",
-            "North America": "#FFCE56",
-            "Australia": "#4BC0C0",
-            "Africa": "#9966FF",
-            "South America": "#FF9F40"
+            "Europe": { background: "linear-gradient(135deg, #FF9966, #FF5E62)", chart: "rgba(255, 153, 102, 0.6)" },
+            "North America": { background: "linear-gradient(135deg, #4B79A1, #283E51)", chart: "rgba(75, 121, 161, 0.6)" },
+            "Asia": { background: "linear-gradient(135deg, #16A085, #F4D03F)", chart: "rgba(22, 160, 133, 0.6)" },
+            "Australia": { background: "linear-gradient(135deg, #EB3349, #F45C43)", chart: "rgba(235, 51, 73, 0.6)" },
+            "Africa": { background: "linear-gradient(135deg, #5C258D, #4389A2)", chart: "rgba(92, 37, 141, 0.6)" },
+            "South America": { background: "linear-gradient(135deg, #134E5E, #71B280)", chart: "rgba(19, 78, 94, 0.6)" }
         };
 
-        const tableBody = document.querySelector('#priceTable tbody');
-        const searchInput = document.getElementById('searchInput');
-        const continentFilter = document.getElementById('continentFilter');
-        const priceFilter = document.getElementById('priceFilter');
-        const usdToggle = document.getElementById('usdToggle');
-        const eurToggle = document.getElementById('eurToggle');
-        const legendContainer = document.getElementById('continentLegend');
-        let currentCurrency = 'USD';
-        let priceChart;
+        // Format price
+        function formatPrice(price, currency) {
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(price);
+        }
 
-        function initializeFilters() {
-            const continents = [...new Set(cityPrices.map(city => city.continent))];
-            continents.forEach(continent => {
-                const option = document.createElement('option');
-                option.value = continent;
-                option.textContent = continent;
-                continentFilter.appendChild(option);
+        // Create city card
+        function createCityCard(city, index, currency) {
+            const card = document.createElement('div');
+            card.className = 'city-card';
+            card.style.background = continentColors[city.continent].background;
+
+            const price = currency === 'EUR' ? city.priceEUR : city.priceEUR * EUR_TO_USD;
+
+            card.innerHTML = `
+                <div class="city-rank">${index + 1}</div>
+                <img src="${city.image}" alt="${city.name}" class="city-image">
+                <div class="city-info">
+                    <div class="city-name">${city.name}</div>
+                    <div class="city-price">${formatPrice(price, currency)}/m²</div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Display cities
+        function displayCities(currency) {
+            const cityList = document.getElementById('cityList');
+            cityList.innerHTML = '';
+            cities.forEach((city, index) => {
+                const card = createCityCard(city, index, currency);
+                cityList.appendChild(card);
             });
         }
 
-        function displayPrices(cities) {
-            tableBody.innerHTML = '';
-            cities.forEach(city => {
-                const row = document.createElement('tr');
-                const price = currentCurrency === 'USD' ? city.priceUSD : (city.priceEUR || city.priceUSD * 0.91);
-                row.innerHTML = `
-                    <td class="city-name">
-                        <span class="continent-indicator" style="background-color: ${continentColors[city.continent]}"></span>
-                        ${city.city}
-                    </td>
-                    <td class="price">${price.toLocaleString('en-US', { style: 'currency', currency: currentCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-
-            updateChart(cities);
-            updateLegend();
-        }
-
-        function filterCities() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const selectedContinent = continentFilter.value;
-            const selectedPriceRange = priceFilter.value;
-
-            const filteredCities = cityPrices.filter(city => {
-                const matchesSearch = city.city.toLowerCase().includes(searchTerm);
-                const matchesContinent = !selectedContinent || city.continent === selectedContinent;
-                const matchesPriceRange = !selectedPriceRange || isPriceInRange(city.priceUSD, selectedPriceRange);
-                return matchesSearch && matchesContinent && matchesPriceRange;
-            });
-
-            filteredCities.sort((a, b) => {
-                const priceA = currentCurrency === 'USD' ? a.priceUSD : (a.priceEUR || a.priceUSD * 0.91);
-                const priceB = currentCurrency === 'USD' ? b.priceUSD : (b.priceEUR || b.priceUSD * 0.91);
-                return priceB - priceA;
-            });
-
-            displayPrices(filteredCities);
-        }
-
-        function updateChart(data) {
+        // Create and update chart
+        let chart;
+        function updateChart(currency) {
             const ctx = document.getElementById('priceChart').getContext('2d');
-            const chartData = {
-                labels: data.map(item => item.city),
-                datasets: [{
-                    label: `Price per m² (${currentCurrency})`,
-                    data: data.map(item => currentCurrency === 'USD' ? item.priceUSD : (item.priceEUR || item.priceUSD * 0.91)),
-                    backgroundColor: data.map(item => continentColors[item.continent]),
-                    borderColor: data.map(item => continentColors[item.continent]),
-                    borderWidth: 1
-                }]
-            };
+            const labels = cities.map(city => city.name);
+            const data = cities.map(city => currency === 'EUR' ? city.priceEUR : city.priceEUR * EUR_TO_USD);
+            const backgroundColors = cities.map(city => continentColors[city.continent].chart);
 
-            if (priceChart) {
-                priceChart.destroy();
+            if (chart) {
+                chart.destroy();
             }
 
-            priceChart = new Chart(ctx, {
+            chart = new Chart(ctx, {
                 type: 'bar',
-                data: chartData,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `Price per m² (${currency})`,
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderColor: backgroundColors.map(color => color.replace('0.6', '1')),
+                        borderWidth: 1
+                    }]
+                },
                 options: {
                     responsive: true,
                     scales: {
@@ -444,55 +257,35 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: `Price per m² (${currentCurrency})`
+                                text: `Price per m² (${currency})`
                             }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
                         }
                     }
                 }
             });
         }
 
-        function updateLegend() {
-            legendContainer.innerHTML = '';
-            const uniqueContinents = [...new Set(cityPrices.map(city => city.continent))];
-            uniqueContinents.forEach(continent => {
-                const legendItem = document.createElement('div');
-                legendItem.className = 'legend-item';
-                legendItem.innerHTML = `
-                    <div class="legend-color" style="background-color: ${continentColors[continent]}"></div>
-                    <span>${continent}</span>
-                `;
-                legendContainer.appendChild(legendItem);
-            });
-        }
+        // Currency toggle functionality
+        const eurToggle = document.getElementById('eurToggle');
+        const usdToggle = document.getElementById('usdToggle');
 
-        function isPriceInRange(price, range) {
-            const [min, max] = range.split('-').map(Number);
-            return price >= min && (!max || price <= max);
-        }
+        eurToggle.addEventListener('click', () => {
+            eurToggle.classList.add('active');
+            usdToggle.classList.remove('active');
+            displayCities('EUR');
+            updateChart('EUR');
+        });
 
-        function toggleCurrency(currency) {
-            currentCurrency = currency;
-            usdToggle.classList.toggle('active', currency === 'USD');
-            eurToggle.classList.toggle('active', currency === 'EUR');
-            filterCities();
-        }
+        usdToggle.addEventListener('click', () => {
+            usdToggle.classList.add('active');
+            eurToggle.classList.remove('active');
+            displayCities('USD');
+            updateChart('USD');
+        });
 
-        // Event listeners
-        searchInput.addEventListener('input', filterCities);
-        continentFilter.addEventListener('change', filterCities);
-        priceFilter.addEventListener('change', filterCities);
-        usdToggle.addEventListener('click', () => toggleCurrency('USD'));
-        eurToggle.addEventListener('click', () => toggleCurrency('EUR'));
-
-        // Initialize
-        initializeFilters();
-        displayPrices(cityPrices);
+        // Initial display
+        displayCities('EUR');
+        updateChart('EUR');
     </script>
 </body>
 </html>
