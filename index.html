@@ -161,21 +161,21 @@
     </div>
 
     <script>
-        // City data with continent information and image URLs
+        // City data with continent information
         const cities = [
-            { name: "Hong Kong", priceEUR: 22000, continent: "Asia", image: "/api/placeholder/150/100" },
-            { name: "London", priceEUR: 14000, continent: "Europe", image: "/api/placeholder/150/100" },
-            { name: "Singapore", priceEUR: 13500, continent: "Asia", image: "/api/placeholder/150/100" },
-            { name: "New York", priceEUR: 12500, continent: "North America", image: "/api/placeholder/150/100" },
-            { name: "San Francisco", priceEUR: 11500, continent: "North America", image: "/api/placeholder/150/100" },
-            { name: "Tokyo", priceEUR: 11000, continent: "Asia", image: "/api/placeholder/150/100" },
-            { name: "Sydney", priceEUR: 9500, continent: "Australia", image: "/api/placeholder/150/100" },
-            { name: "Paris", priceEUR: 9224, continent: "Europe", image: "/api/placeholder/150/100" },
-            { name: "Munich", priceEUR: 8500, continent: "Europe", image: "/api/placeholder/150/100" },
-            { name: "Rome", priceEUR: 7564, continent: "Europe", image: "/api/placeholder/150/100" },
-            { name: "Dubai", priceEUR: 7000, continent: "Asia", image: "/api/placeholder/150/100" },
-            { name: "Madrid", priceEUR: 4729, continent: "Europe", image: "/api/placeholder/150/100" },
-            { name: "Ho Chi Minh City", priceEUR: 3506.61, continent: "Asia", image: "/api/placeholder/150/100" }
+            { name: "Hong Kong", priceEUR: 22000, continent: "Asia" },
+            { name: "London", priceEUR: 14000, continent: "Europe" },
+            { name: "Singapore", priceEUR: 13500, continent: "Asia" },
+            { name: "New York", priceEUR: 12500, continent: "North America" },
+            { name: "San Francisco", priceEUR: 11500, continent: "North America" },
+            { name: "Tokyo", priceEUR: 11000, continent: "Asia" },
+            { name: "Sydney", priceEUR: 9500, continent: "Australia" },
+            { name: "Paris", priceEUR: 9224, continent: "Europe" },
+            { name: "Munich", priceEUR: 8500, continent: "Europe" },
+            { name: "Rome", priceEUR: 7564, continent: "Europe" },
+            { name: "Dubai", priceEUR: 7000, continent: "Asia" },
+            { name: "Madrid", priceEUR: 4729, continent: "Europe" },
+            { name: "Ho Chi Minh City", priceEUR: 3506.61, continent: "Asia" }
         ];
 
         // Conversion rate (example: 1 EUR = 1.18 USD)
@@ -191,22 +191,59 @@
             "South America": { background: "linear-gradient(135deg, #134E5E, #71B280)", chart: "rgba(19, 78, 94, 0.6)" }
         };
 
+        // Unsplash API configuration
+        const UNSPLASH_ACCESS_KEY = 'FRp17sf8RXnIXgFOFn7ikDzcH_okxp8h235aRm8YHs0';
+        const UNSPLASH_API_URL = 'https://api.unsplash.com/search/photos';
+
+        // Updated function to fetch image from Unsplash with correct API call
+        async function fetchCityImage(cityName) {
+            if (typeof fetch === 'undefined') {
+                console.log('Fetch not available, using fallback image for', cityName);
+                return `/api/placeholder/150/100?text=${encodeURIComponent(cityName)}`;
+            }
+
+            try {
+                const response = await fetch(`${UNSPLASH_API_URL}?query=${encodeURIComponent(cityName)} cityscape&orientation=landscape&per_page=1`, {
+                    headers: {
+                        'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}`,
+                        'Accept-Version': 'v1'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.results && data.results.length > 0) {
+                    return data.results[0].urls.small;
+                } else {
+                    throw new Error('No images found');
+                }
+            } catch (error) {
+                console.error(`Failed to fetch image for ${cityName}:`, error);
+                return `/api/placeholder/150/100?text=${encodeURIComponent(cityName)}`;
+            }
+        }
+
         // Format price
         function formatPrice(price, currency) {
             return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(price);
         }
 
-        // Create city card
-        function createCityCard(city, index, currency) {
+        // Create city card (now async to wait for image fetch)
+        async function createCityCard(city, index, currency) {
             const card = document.createElement('div');
             card.className = 'city-card';
             card.style.background = continentColors[city.continent].background;
 
             const price = currency === 'EUR' ? city.priceEUR : city.priceEUR * EUR_TO_USD;
+            const imageUrl = await fetchCityImage(city.name);
 
             card.innerHTML = `
                 <div class="city-rank">${index + 1}</div>
-                <img src="${city.image}" alt="${city.name}" class="city-image">
+                <img src="${imageUrl}" alt="${city.name}" class="city-image">
                 <div class="city-info">
                     <div class="city-name">${city.name}</div>
                     <div class="city-price">${formatPrice(price, currency)}/m²</div>
@@ -216,14 +253,14 @@
             return card;
         }
 
-        // Display cities
-        function displayCities(currency) {
+        // Display cities (now async)
+        async function displayCities(currency) {
             const cityList = document.getElementById('cityList');
             cityList.innerHTML = '';
-            cities.forEach((city, index) => {
-                const card = createCityCard(city, index, currency);
+            for (let i = 0; i < cities.length; i++) {
+                const card = await createCityCard(cities[i], i, currency);
                 cityList.appendChild(card);
-            });
+            }
         }
 
         // Create and update chart
@@ -265,27 +302,37 @@
             });
         }
 
-        // Currency toggle functionality
-        const eurToggle = document.getElementById('eurToggle');
-        const usdToggle = document.getElementById('usdToggle');
+        // Wait for the DOM to be fully loaded before accessing elements
+        document.addEventListener('DOMContentLoaded', function() {
+            const eurToggle = document.getElementById('eurToggle');
+            const usdToggle = document.getElementById('usdToggle');
 
-        eurToggle.addEventListener('click', () => {
-            eurToggle.classList.add('active');
-            usdToggle.classList.remove('active');
-            displayCities('EUR');
-            updateChart('EUR');
+            if (!eurToggle || !usdToggle) {
+                console.error('Currency toggle buttons not found');
+                return;
+            }
+
+            // Currency toggle functionality
+            eurToggle.addEventListener('click', async () => {
+                eurToggle.classList.add('active');
+                usdToggle.classList.remove('active');
+                await displayCities('EUR');
+                updateChart('EUR');
+            });
+
+            usdToggle.addEventListener('click', async () => {
+                usdToggle.classList.add('active');
+                eurToggle.classList.remove('active');
+                await displayCities('USD');
+                updateChart('USD');
+            });
+
+            // Initial display
+            (async function() {
+                await displayCities('EUR');
+                updateChart('EUR');
+            })();
         });
-
-        usdToggle.addEventListener('click', () => {
-            usdToggle.classList.add('active');
-            eurToggle.classList.remove('active');
-            displayCities('USD');
-            updateChart('USD');
-        });
-
-        // Initial display
-        displayCities('EUR');
-        updateChart('EUR');
     </script>
 </body>
 </html>
