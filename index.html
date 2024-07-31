@@ -14,7 +14,6 @@
             padding: 0;
             background-color: #f0f4f8;
             color: #333;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
         .container {
             width: 90%;
@@ -85,32 +84,40 @@
             background-color: #e8f4fd;
             transition: background-color 0.3s ease;
         }
-        #currencyToggle {
-            margin-bottom: 30px;
-            text-align: center;
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
         }
-        .radio-group {
-            display: inline-block;
+        .search-filter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type="text"], select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .currency-toggle {
+            display: flex;
+            gap: 10px;
+        }
+        .currency-toggle button {
+            padding: 10px 15px;
             background-color: #e0e0e0;
-            border-radius: 30px;
-            padding: 5px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .radio-group label {
-            display: inline-block;
-            padding: 10px 25px;
+            color: #333;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
+            transition: background-color 0.3s ease;
         }
-        .radio-group input[type="radio"] {
-            display: none;
-        }
-        .radio-group input[type="radio"]:checked + label {
+        .currency-toggle button.active {
             background-color: #3498db;
             color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         .city-name {
             font-weight: 500;
@@ -165,6 +172,14 @@
             th, td {
                 padding: 10px;
             }
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-filter {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     </style>
 </head>
@@ -182,12 +197,23 @@
         <h1>Global Real Estate Price Index 2024</h1>
         
         <div class="card">
-            <div id="currencyToggle">
-                <div class="radio-group">
-                    <input type="radio" id="usd" name="currency" value="USD" checked>
-                    <label for="usd">USD</label>
-                    <input type="radio" id="eur" name="currency" value="EUR">
-                    <label for="eur">EUR</label>
+            <div class="controls">
+                <div class="search-filter">
+                    <input type="text" id="searchInput" placeholder="Search cities...">
+                    <select id="continentFilter">
+                        <option value="">All Continents</option>
+                    </select>
+                    <select id="priceFilter">
+                        <option value="">All Prices</option>
+                        <option value="0-5000">$0 - $5,000</option>
+                        <option value="5001-10000">$5,001 - $10,000</option>
+                        <option value="10001-15000">$10,001 - $15,000</option>
+                        <option value="15001+">$15,001+</option>
+                    </select>
+                </div>
+                <div class="currency-toggle">
+                    <button id="usdToggle" class="active">USD</button>
+                    <button id="eurToggle">EUR</button>
                 </div>
             </div>
 
@@ -199,12 +225,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Table rows will be populated by JavaScript -->
                 </tbody>
             </table>
             
             <div class="legend" id="continentLegend">
-                <!-- Legend items will be populated by JavaScript -->
             </div>
 
             <p class="note">* Prices are based on city center locations as of 2024</p>
@@ -221,11 +245,15 @@
             { city: "Singapore", priceUSD: 20512.39, continent: "Asia" },
             { city: "London", priceUSD: 17200.00, continent: "Europe" },
             { city: "New York", priceUSD: 15300.00, continent: "North America" },
+            { city: "San Francisco", priceUSD: 11077.00, continent: "North America" },
             { city: "Paris", priceUSD: 9224.89, continent: "Europe" },
             { city: "Sydney", priceUSD: 10895.62, continent: "Australia" },
             { city: "Vancouver", priceUSD: 10895.62, continent: "North America" },
             { city: "Tokyo", priceUSD: 9389.22, continent: "Asia" },
+            { city: "Taipei", priceUSD: 7027.00, continent: "Asia" },
             { city: "Berlin", priceUSD: 8178.95, continent: "Europe" },
+            { city: "Rome", priceUSD: 8320.40, continent: "Europe", priceEUR: 7564 },
+            { city: "Madrid", priceUSD: 6037.90, continent: "Europe", priceEUR: 5489 },
             { city: "Dubai", priceUSD: 4862.33, continent: "Asia" },
             { city: "Ho Chi Minh", priceUSD: 4249.66, continent: "Asia" }
         ];
@@ -240,47 +268,83 @@
         };
 
         const tableBody = document.querySelector('#priceTable tbody');
-        const currencyToggle = document.getElementById('currencyToggle');
+        const searchInput = document.getElementById('searchInput');
+        const continentFilter = document.getElementById('continentFilter');
+        const priceFilter = document.getElementById('priceFilter');
+        const usdToggle = document.getElementById('usdToggle');
+        const eurToggle = document.getElementById('eurToggle');
         const legendContainer = document.getElementById('continentLegend');
-        let chart;
+        let currentCurrency = 'USD';
+        let priceChart;
 
-        function displayPrices(currency) {
+        function initializeFilters() {
+            const continents = [...new Set(cityPrices.map(city => city.continent))];
+            continents.forEach(continent => {
+                const option = document.createElement('option');
+                option.value = continent;
+                option.textContent = continent;
+                continentFilter.appendChild(option);
+            });
+        }
+
+        function displayPrices(cities) {
             tableBody.innerHTML = '';
-            const sortedPrices = cityPrices.sort((a, b) => b.priceUSD - a.priceUSD);
-            sortedPrices.forEach(city => {
+            cities.forEach(city => {
                 const row = document.createElement('tr');
-                const price = currency === 'USD' ? city.priceUSD : city.priceUSD * 0.91; // Simple USD to EUR conversion
+                const price = currentCurrency === 'USD' ? city.priceUSD : (city.priceEUR || city.priceUSD * 0.91);
                 row.innerHTML = `
                     <td class="city-name">
                         <span class="continent-indicator" style="background-color: ${continentColors[city.continent]}"></span>
                         ${city.city}
                     </td>
-                    <td class="price">${price.toLocaleString('en-US', { style: 'currency', currency: currency, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td class="price">${price.toLocaleString('en-US', { style: 'currency', currency: currentCurrency, minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                 `;
                 tableBody.appendChild(row);
             });
-            updateChart(sortedPrices, currency);
+
+            updateChart(cities);
             updateLegend();
         }
 
-        function updateChart(data, currency) {
+        function filterCities() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedContinent = continentFilter.value;
+            const selectedPriceRange = priceFilter.value;
+
+            const filteredCities = cityPrices.filter(city => {
+                const matchesSearch = city.city.toLowerCase().includes(searchTerm);
+                const matchesContinent = !selectedContinent || city.continent === selectedContinent;
+                const matchesPriceRange = !selectedPriceRange || isPriceInRange(city.priceUSD, selectedPriceRange);
+                return matchesSearch && matchesContinent && matchesPriceRange;
+            });
+
+            filteredCities.sort((a, b) => {
+                const priceA = currentCurrency === 'USD' ? a.priceUSD : (a.priceEUR || a.priceUSD * 0.91);
+                const priceB = currentCurrency === 'USD' ? b.priceUSD : (b.priceEUR || b.priceUSD * 0.91);
+                return priceB - priceA;
+            });
+
+            displayPrices(filteredCities);
+        }
+
+        function updateChart(data) {
             const ctx = document.getElementById('priceChart').getContext('2d');
             const chartData = {
                 labels: data.map(item => item.city),
                 datasets: [{
-                    label: `Price per m² (${currency})`,
-                    data: data.map(item => currency === 'USD' ? item.priceUSD : item.priceUSD * 0.91),
+                    label: `Price per m² (${currentCurrency})`,
+                    data: data.map(item => currentCurrency === 'USD' ? item.priceUSD : (item.priceEUR || item.priceUSD * 0.91)),
                     backgroundColor: data.map(item => continentColors[item.continent]),
                     borderColor: data.map(item => continentColors[item.continent]),
                     borderWidth: 1
                 }]
             };
 
-            if (chart) {
-                chart.destroy();
+            if (priceChart) {
+                priceChart.destroy();
             }
 
-            chart = new Chart(ctx, {
+            priceChart = new Chart(ctx, {
                 type: 'bar',
                 data: chartData,
                 options: {
@@ -290,7 +354,7 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: `Price per m² (${currency})`
+                                text: `Price per m² (${currentCurrency})`
                             }
                         }
                     },
@@ -317,12 +381,28 @@
             });
         }
 
-        currencyToggle.addEventListener('change', (event) => {
-            displayPrices(event.target.value);
-        });
+        function isPriceInRange(price, range) {
+            const [min, max] = range.split('-').map(Number);
+            return price >= min && (!max || price <= max);
+        }
 
-        // Initial display
-        displayPrices('USD');
+        function toggleCurrency(currency) {
+            currentCurrency = currency;
+            usdToggle.classList.toggle('active', currency === 'USD');
+            eurToggle.classList.toggle('active', currency === 'EUR');
+            filterCities();
+        }
+
+        // Event listeners
+        searchInput.addEventListener('input', filterCities);
+        continentFilter.addEventListener('change', filterCities);
+        priceFilter.addEventListener('change', filterCities);
+        usdToggle.addEventListener('click', () => toggleCurrency('USD'));
+        eurToggle.addEventListener('click', () => toggleCurrency('EUR'));
+
+        // Initialize
+        initializeFilters();
+        displayPrices(cityPrices);
     </script>
 </body>
 </html>
