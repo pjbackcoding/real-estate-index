@@ -161,25 +161,26 @@
     </div>
 
     <script>
-        // City data with continent information
+        // City data with continent information and correct prices
         const cities = [
-            { name: "Hong Kong", priceEUR: 22000, continent: "Asia" },
-            { name: "London", priceEUR: 14000, continent: "Europe" },
-            { name: "Singapore", priceEUR: 13500, continent: "Asia" },
-            { name: "New York", priceEUR: 12500, continent: "North America" },
-            { name: "San Francisco", priceEUR: 11500, continent: "North America" },
-            { name: "Tokyo", priceEUR: 11000, continent: "Asia" },
-            { name: "Sydney", priceEUR: 9500, continent: "Australia" },
+            { name: "Hong Kong", priceUSD: 18845, continent: "Asia" },
+            { name: "Singapore", priceUSD: 17610, continent: "Asia" },
+            { name: "New York", priceUSD: 15343, continent: "North America" },
+            { name: "San Francisco", priceUSD: 11077, continent: "North America" },
+            { name: "London", priceEUR: 10076, continent: "Europe" },
+            { name: "Tokyo", priceUSD: 4473, continent: "Asia" },
+            { name: "Sydney", priceAUD: 9500, continent: "Australia" }, // Assuming 9500 AUD as you mentioned to be careful with Australian dollars
             { name: "Paris", priceEUR: 9224, continent: "Europe" },
             { name: "Munich", priceEUR: 8500, continent: "Europe" },
             { name: "Rome", priceEUR: 7564, continent: "Europe" },
-            { name: "Dubai", priceEUR: 7000, continent: "Asia" },
+            { name: "Dubai", priceUSD: 4862.33, continent: "Asia" },
             { name: "Madrid", priceEUR: 4729, continent: "Europe" },
-            { name: "Ho Chi Minh City", priceEUR: 3506.61, continent: "Asia" }
+            { name: "Ho Chi Minh City", priceUSD: 3506.61, continent: "Asia" }
         ];
 
-        // Conversion rate (example: 1 EUR = 1.18 USD)
+        // Conversion rates (assuming 1 EUR = 1.18 USD and 1 AUD = 0.75 USD for this example)
         const EUR_TO_USD = 1.18;
+        const AUD_TO_USD = 0.75;
 
         // Updated color schemes for different continents with precise hex codes
         const continentColors = {
@@ -195,7 +196,7 @@
         const UNSPLASH_ACCESS_KEY = 'FRp17sf8RXnIXgFOFn7ikDzcH_okxp8h235aRm8YHs0';
         const UNSPLASH_API_URL = 'https://api.unsplash.com/search/photos';
 
-        // Updated function to fetch image from Unsplash with correct API call
+        // Function to fetch image from Unsplash
         async function fetchCityImage(cityName) {
             if (typeof fetch === 'undefined') {
                 console.log('Fetch not available, using fallback image for', cityName);
@@ -227,6 +228,20 @@
             }
         }
 
+        // Function to get price in desired currency
+        function getPrice(city, currency) {
+            if (currency === 'USD') {
+                if (city.priceUSD) return city.priceUSD;
+                if (city.priceEUR) return city.priceEUR * EUR_TO_USD;
+                if (city.priceAUD) return city.priceAUD * AUD_TO_USD;
+            } else if (currency === 'EUR') {
+                if (city.priceEUR) return city.priceEUR;
+                if (city.priceUSD) return city.priceUSD / EUR_TO_USD;
+                if (city.priceAUD) return (city.priceAUD * AUD_TO_USD) / EUR_TO_USD;
+            }
+            return 0; // Default case, should not happen
+        }
+
         // Format price
         function formatPrice(price, currency) {
             return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(price);
@@ -238,7 +253,7 @@
             card.className = 'city-card';
             card.style.background = continentColors[city.continent].background;
 
-            const price = currency === 'EUR' ? city.priceEUR : city.priceEUR * EUR_TO_USD;
+            const price = getPrice(city, currency);
             const imageUrl = await fetchCityImage(city.name);
 
             card.innerHTML = `
@@ -268,7 +283,7 @@
         function updateChart(currency) {
             const ctx = document.getElementById('priceChart').getContext('2d');
             const labels = cities.map(city => city.name);
-            const data = cities.map(city => currency === 'EUR' ? city.priceEUR : city.priceEUR * EUR_TO_USD);
+            const data = cities.map(city => getPrice(city, currency));
             const backgroundColors = cities.map(city => continentColors[city.continent].chart);
 
             if (chart) {
