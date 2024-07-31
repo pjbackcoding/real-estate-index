@@ -168,19 +168,30 @@
             { name: "New York", priceUSD: 15343, continent: "North America" },
             { name: "San Francisco", priceUSD: 11077, continent: "North America" },
             { name: "London", priceEUR: 10076, continent: "Europe" },
-            { name: "Tokyo", priceUSD: 4473, continent: "Asia" },
-            { name: "Sydney", priceAUD: 9500, continent: "Australia" }, // Assuming 9500 AUD as you mentioned to be careful with Australian dollars
             { name: "Paris", priceEUR: 9224, continent: "Europe" },
+            { name: "Sydney", priceAUD: 9500, continent: "Australia" },
             { name: "Munich", priceEUR: 8500, continent: "Europe" },
             { name: "Rome", priceEUR: 7564, continent: "Europe" },
-            { name: "Dubai", priceUSD: 4862.33, continent: "Asia" },
             { name: "Madrid", priceEUR: 4729, continent: "Europe" },
+            { name: "Tokyo", priceUSD: 4473, continent: "Asia" },
+            { name: "Dubai", priceUSD: 4862.33, continent: "Asia" },
             { name: "Ho Chi Minh City", priceUSD: 3506.61, continent: "Asia" }
         ];
 
-        // Conversion rates (assuming 1 EUR = 1.18 USD and 1 AUD = 0.75 USD for this example)
+        // Conversion rates
         const EUR_TO_USD = 1.18;
         const AUD_TO_USD = 0.75;
+
+        // Function to get price in USD for sorting
+        function getPriceUSD(city) {
+            if (city.priceUSD) return city.priceUSD;
+            if (city.priceEUR) return city.priceEUR * EUR_TO_USD;
+            if (city.priceAUD) return city.priceAUD * AUD_TO_USD;
+            return 0;
+        }
+
+        // Sort cities by price in USD (descending order)
+        cities.sort((a, b) => getPriceUSD(b) - getPriceUSD(a));
 
         // Updated color schemes for different continents with precise hex codes
         const continentColors = {
@@ -231,9 +242,7 @@
         // Function to get price in desired currency
         function getPrice(city, currency) {
             if (currency === 'USD') {
-                if (city.priceUSD) return city.priceUSD;
-                if (city.priceEUR) return city.priceEUR * EUR_TO_USD;
-                if (city.priceAUD) return city.priceAUD * AUD_TO_USD;
+                return getPriceUSD(city);
             } else if (currency === 'EUR') {
                 if (city.priceEUR) return city.priceEUR;
                 if (city.priceUSD) return city.priceUSD / EUR_TO_USD;
