@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="description" content="Global Real Estate Price Index 2024 - Compare property prices across major cities around the world. Search by city, switch currencies, and view interactive charts.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Global Real Estate Price Index 2024</title>
+
+    <!-- Poppins font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
     <style>
         :root {
+            /* Light mode variables */
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
             --accent-color: #e74c3c;
@@ -17,6 +24,17 @@
             --text-light: #7f8c8d;
         }
 
+        /* Dark mode overrides */
+        body.dark-mode {
+            --primary-color: #ecf0f1;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --background-color: #1f2d3d;
+            --card-background: #2c3e50;
+            --text-color: #ecf0f1;
+            --text-light: #bdc3c7;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             line-height: 1.6;
@@ -24,6 +42,7 @@
             padding: 0;
             background-color: var(--background-color);
             color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .container {
@@ -31,6 +50,12 @@
             max-width: 1200px;
             margin: 40px auto;
             padding: 20px;
+        }
+
+        header,
+        main,
+        footer {
+            margin-bottom: 30px;
         }
 
         h1 {
@@ -41,6 +66,49 @@
             font-weight: 300;
             text-transform: uppercase;
             letter-spacing: 2px;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Search bar styling */
+        #searchInput {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        /* Currency toggle */
+        .currency-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .currency-toggle button {
+            padding: 10px 15px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            outline: none;
+        }
+
+        .currency-toggle button.active {
+            background-color: var(--primary-color);
+        }
+
+        .city-list {
+            margin-top: 30px;
         }
 
         .city-card {
@@ -56,6 +124,20 @@
         .city-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .city-rank {
+            font-size: 2em;
+            font-weight: 700;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 20px;
         }
 
         .city-image {
@@ -82,47 +164,34 @@
             color: white;
         }
 
-        .city-rank {
-            font-size: 2em;
-            font-weight: 700;
-            color: white;
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-right: 20px;
-        }
-
-        .currency-toggle {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .currency-toggle button {
-            padding: 10px 15px;
-            background-color: var(--secondary-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin: 0 10px;
-        }
-
-        .currency-toggle button.active {
-            background-color: var(--primary-color);
-        }
-
         .chart-container {
             margin-top: 40px;
             background-color: var(--card-background);
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        footer p {
+            text-align: center;
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+
+        /* Dark mode button */
+        #darkModeToggle {
+            padding: 10px 15px;
+            background-color: var(--accent-color);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            outline: none;
+        }
+
+        #darkModeToggle:hover {
+            background-color: #c0392b;
         }
 
         @media (max-width: 768px) {
@@ -144,24 +213,48 @@
 </head>
 <body>
     <div class="container">
-        <h1>Global Real Estate Price Index 2024</h1>
+        <header>
+            <h1>Global Real Estate Price Index 2024</h1>
+        </header>
         
-        <div class="currency-toggle">
-            <button id="eurToggle" class="active">EUR</button>
-            <button id="usdToggle">USD</button>
-        </div>
+        <main>
+            <div class="controls">
+                <!-- Search Input -->
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search city..."
+                    aria-label="Search for a city by name"
+                />
 
-        <div id="cityList">
-            <!-- City cards will be dynamically inserted here -->
-        </div>
+                <!-- Currency Toggle Buttons -->
+                <div class="currency-toggle">
+                    <button id="eurToggle">EUR</button>
+                    <button id="usdToggle">USD</button>
+                </div>
 
-        <div class="chart-container">
-            <canvas id="priceChart"></canvas>
-        </div>
+                <!-- Dark Mode Toggle -->
+                <button id="darkModeToggle">Toggle Dark Mode</button>
+            </div>
+
+            <!-- City List -->
+            <div id="cityList" class="city-list">
+                <!-- City cards will be dynamically inserted here -->
+            </div>
+
+            <!-- Chart Container -->
+            <div class="chart-container">
+                <canvas id="priceChart"></canvas>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Global Real Estate Analytics. Data is for illustrative purposes only.</p>
+        </footer>
     </div>
 
     <script>
-        // City data with continent information and correct prices
+        // City data with continent information and corrected prices
         const cities = [
             { name: "Hong Kong", priceUSD: 18845, continent: "Asia" },
             { name: "Singapore", priceUSD: 17610, continent: "Asia" },
@@ -195,12 +288,30 @@
 
         // Updated color schemes for different continents with precise hex codes
         const continentColors = {
-            "Europe": { background: "linear-gradient(135deg, #FF9966, #FF5E62)", chart: "rgba(255, 153, 102, 0.6)" },
-            "North America": { background: "linear-gradient(135deg, #4B79A1, #283E51)", chart: "rgba(75, 121, 161, 0.6)" },
-            "Asia": { background: "linear-gradient(135deg, #16A085, #F4D03F)", chart: "rgba(22, 160, 133, 0.6)" },
-            "Australia": { background: "linear-gradient(135deg, #EB3349, #F45C43)", chart: "rgba(235, 51, 73, 0.6)" },
-            "Africa": { background: "linear-gradient(135deg, #5C258D, #4389A2)", chart: "rgba(92, 37, 141, 0.6)" },
-            "South America": { background: "linear-gradient(135deg, #134E5E, #71B280)", chart: "rgba(19, 78, 94, 0.6)" }
+            "Europe": {
+                background: "linear-gradient(135deg, #FF9966, #FF5E62)",
+                chart: "rgba(255, 153, 102, 0.6)"
+            },
+            "North America": {
+                background: "linear-gradient(135deg, #4B79A1, #283E51)",
+                chart: "rgba(75, 121, 161, 0.6)"
+            },
+            "Asia": {
+                background: "linear-gradient(135deg, #16A085, #F4D03F)",
+                chart: "rgba(22, 160, 133, 0.6)"
+            },
+            "Australia": {
+                background: "linear-gradient(135deg, #EB3349, #F45C43)",
+                chart: "rgba(235, 51, 73, 0.6)"
+            },
+            "Africa": {
+                background: "linear-gradient(135deg, #5C258D, #4389A2)",
+                chart: "rgba(92, 37, 141, 0.6)"
+            },
+            "South America": {
+                background: "linear-gradient(135deg, #134E5E, #71B280)",
+                chart: "rgba(19, 78, 94, 0.6)"
+            }
         };
 
         // Unsplash API configuration
@@ -215,12 +326,15 @@
             }
 
             try {
-                const response = await fetch(`${UNSPLASH_API_URL}?query=${encodeURIComponent(cityName)} cityscape&orientation=landscape&per_page=1`, {
-                    headers: {
-                        'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}`,
-                        'Accept-Version': 'v1'
+                const response = await fetch(
+                    `${UNSPLASH_API_URL}?query=${encodeURIComponent(cityName)} cityscape&orientation=landscape&per_page=1`,
+                    {
+                        headers: {
+                            'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}`,
+                            'Accept-Version': 'v1'
+                        }
                     }
-                });
+                );
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -248,26 +362,33 @@
                 if (city.priceUSD) return city.priceUSD / EUR_TO_USD;
                 if (city.priceAUD) return (city.priceAUD * AUD_TO_USD) / EUR_TO_USD;
             }
-            return 0; // Default case, should not happen
+            return 0; // Fallback
         }
 
         // Format price
         function formatPrice(price, currency) {
-            return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(price);
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: currency
+            }).format(price);
         }
 
-        // Create city card (now async to wait for image fetch)
+        // Create city card (async to wait for image fetch)
         async function createCityCard(city, index, currency) {
             const card = document.createElement('div');
             card.className = 'city-card';
-            card.style.background = continentColors[city.continent].background;
+            card.style.background = continentColors[city.continent].background || 'var(--secondary-color)';
 
             const price = getPrice(city, currency);
             const imageUrl = await fetchCityImage(city.name);
 
             card.innerHTML = `
                 <div class="city-rank">${index + 1}</div>
-                <img src="${imageUrl}" alt="${city.name}" class="city-image">
+                <img 
+                    src="${imageUrl}" 
+                    alt="A view of ${city.name} cityscape" 
+                    class="city-image" 
+                />
                 <div class="city-info">
                     <div class="city-name">${city.name}</div>
                     <div class="city-price">${formatPrice(price, currency)}/m²</div>
@@ -277,24 +398,30 @@
             return card;
         }
 
-        // Display cities (now async)
-        async function displayCities(currency) {
+        // Display cities (with optional filtering)
+        async function displayCities(currency, cityListData = cities) {
             const cityList = document.getElementById('cityList');
             cityList.innerHTML = '';
-            for (let i = 0; i < cities.length; i++) {
-                const card = await createCityCard(cities[i], i, currency);
+
+            for (let i = 0; i < cityListData.length; i++) {
+                const card = await createCityCard(cityListData[i], i, currency);
                 cityList.appendChild(card);
             }
         }
 
-        // Create and update chart
+        // Chart instance
         let chart;
-        function updateChart(currency) {
-            const ctx = document.getElementById('priceChart').getContext('2d');
-            const labels = cities.map(city => city.name);
-            const data = cities.map(city => getPrice(city, currency));
-            const backgroundColors = cities.map(city => continentColors[city.continent].chart);
 
+        // Update chart (with optional filtering)
+        function updateChart(currency, cityListData = cities) {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            const labels = cityListData.map(city => city.name);
+            const data = cityListData.map(city => getPrice(city, currency));
+            const backgroundColors = cityListData.map(city => {
+                return continentColors[city.continent]?.chart || "rgba(52, 152, 219, 0.6)";
+            });
+
+            // Destroy old chart instance if any
             if (chart) {
                 chart.destroy();
             }
@@ -313,6 +440,18 @@
                 },
                 options: {
                     responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                // Add city continent info to the tooltip footer
+                                footer: function(tooltipItems) {
+                                    let idx = tooltipItems[0].dataIndex;
+                                    let city = cityListData[idx];
+                                    return `Continent: ${city.continent}`;
+                                }
+                            }
+                        }
+                    },
                     scales: {
                         y: {
                             beginAtZero: true,
@@ -326,37 +465,75 @@
             });
         }
 
-        // Wait for the DOM to be fully loaded before accessing elements
+        // Current currency state (remembered from local storage)
+        let currentCurrency = localStorage.getItem('preferredCurrency') || 'EUR';
+
         document.addEventListener('DOMContentLoaded', function() {
             const eurToggle = document.getElementById('eurToggle');
             const usdToggle = document.getElementById('usdToggle');
+            const searchInput = document.getElementById('searchInput');
+            const darkModeToggle = document.getElementById('darkModeToggle');
 
-            if (!eurToggle || !usdToggle) {
-                console.error('Currency toggle buttons not found');
-                return;
+            // Initialize toggle button classes based on local storage
+            if (currentCurrency === 'USD') {
+                usdToggle.classList.add('active');
+            } else {
+                eurToggle.classList.add('active');
             }
 
-            // Currency toggle functionality
+            // Initial display of cities & chart
+            (async function() {
+                await displayCities(currentCurrency);
+                updateChart(currentCurrency);
+            })();
+
+            // Currency toggle logic
             eurToggle.addEventListener('click', async () => {
+                currentCurrency = 'EUR';
+                localStorage.setItem('preferredCurrency', 'EUR');
                 eurToggle.classList.add('active');
                 usdToggle.classList.remove('active');
-                await displayCities('EUR');
-                updateChart('EUR');
+
+                // Filter cities based on search input before displaying
+                const filtered = filterCities(searchInput.value.toLowerCase().trim());
+                await displayCities(currentCurrency, filtered);
+                updateChart(currentCurrency, filtered);
             });
 
             usdToggle.addEventListener('click', async () => {
+                currentCurrency = 'USD';
+                localStorage.setItem('preferredCurrency', 'USD');
                 usdToggle.classList.add('active');
                 eurToggle.classList.remove('active');
-                await displayCities('USD');
-                updateChart('USD');
+
+                // Filter cities based on search input before displaying
+                const filtered = filterCities(searchInput.value.toLowerCase().trim());
+                await displayCities(currentCurrency, filtered);
+                updateChart(currentCurrency, filtered);
             });
 
-            // Initial display
-            (async function() {
-                await displayCities('EUR');
-                updateChart('EUR');
-            })();
+            // Search input logic
+            searchInput.addEventListener('input', async () => {
+                const query = searchInput.value.toLowerCase().trim();
+
+                // Filter the city list
+                const filtered = filterCities(query);
+
+                // Refresh the display
+                await displayCities(currentCurrency, filtered);
+                updateChart(currentCurrency, filtered);
+            });
+
+            // Dark mode toggle
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+            });
         });
+
+        // Helper: filter cities by user’s search term
+        function filterCities(query) {
+            return cities.filter(city => city.name.toLowerCase().includes(query));
+        }
     </script>
 </body>
 </html>
